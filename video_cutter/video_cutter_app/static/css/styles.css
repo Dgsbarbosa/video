@@ -1,0 +1,33 @@
+
+/* Home */
+.choose-file, .video-choose{
+    display: flex;
+    background-color: blueviolet;
+    margin-top: 10px;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: center; /* Centraliza verticalmente */
+ 
+}
+
+
+
+
+
+/* Geral */
+video {
+    width: 50%;
+    /* 100% para telas pequenas */
+    height: 50%;
+}
+
+@media (min-width: 768px) {
+    video {
+        width: 50%;
+        /* 70% para telas de computador */
+    }
+}
+
+/* Estilo para a div de corte */
+#cut-form-container {
+    display: none;
+}

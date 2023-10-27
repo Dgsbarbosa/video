@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+{% extends "video_cutter_app/base.html" %}
+
+
+<body>
+
+    {% block content %}
+    <!-- Botão para escolher e carregar vídeo -->
+    <div class="choose-file">
+        <input type="file" accept="video/*" id="video-upload-input" style="display: none;">
+        <button id="choose-video-button" class="btn btn-primary btn-lg">Escolher Vídeo</button>
+    </div>
+    <!-- Vídeo selecionado -->
+    <div class="video-choose">
+    <video controls id="video-player" style="display: none;">
+        Seu navegador não suporta a reprodução de vídeo.
+    </video>
+</div>
+    <!-- Div para campos de início e fim do corte -->
+    <form method="post" enctype="multipart/form-data" id="cut-video-form">
+        {% csrf_token %}
+
+        <div id="cut-form-container">
+            <div class="cut-form" id="cut-form">
+                <div class="cut-form-item">
+                    <label for="start_time">Início (HH:MM:SS):</label>
+                    <input type="text" name="start_time" class="start-time" required>
+                    <label for="end_time">Fim (HH:MM:SS):</label>
+                    <input type="text" name="end_time" class="end-time" required>
+                    <!-- Botão para excluir a div cut-form -->
+                    <button class="remove-cut-form">Remover Corte</button>
+                </div>
+            </div>
+
+            <!-- Botão para adicionar um novo corte -->
+            <button id="add-cut-form">Adicionar Corte</button>
+
+            <!-- Botão para cortar o vídeo -->
+            <button id="cut-video-button" type="submit">Cortar Vídeo</button>
+        </div>
+    </form>
+
+
+    {% endblock %}
+
+</body>
+
+</html>

@@ -1,0 +1,35 @@
+    {% extends "video_cutter_app/base.html" %}
+
+    {% block content %}
+
+
+    <!-- Vídeo original -->
+    <h2>Vídeo Original</h2>
+    <video controls>
+        <source src="{{ video.video_file.url }}" type="{{ video.video_file.content_type }}">
+        Seu navegador não suporta a reprodução de vídeo.
+    </video>
+
+    <!-- Cortes do vídeo -->
+    <h2>Cortes do Vídeo</h2>
+    
+    {% for cut in cuts %}
+
+    <h3>Corte {{ forloop.counter }}</h3>
+    <h4>Inicio do corte: {{ cut.start_time }} - Fim do corte: {{ cut.end_time  }}</h4>
+
+    {% if  cut.video_path == "Intervalo inválido" %}
+
+    <h1>Intervalo de corte invalido</h1>
+    {% else %}
+
+
+    <video controls>
+        <source src="{{ cut.video_path.url }}" type="{{ cut.video_path.content_type }}">
+        Seu navegador não suporta a reprodução de vídeo.
+    </video>
+
+    {% endif %}
+    {% endfor %}
+
+    {% endblock %}
