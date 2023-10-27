@@ -7,9 +7,9 @@
 
     {% block content %}
     <!-- Botão para escolher e carregar vídeo -->
-    <div class="choose-file">
+    <div class="choose-file  center-button">
         <input type="file" accept="video/*" id="video-upload-input" style="display: none;">
-        <button id="choose-video-button" class="btn btn-primary btn-lg">Escolher Vídeo</button>
+        <button id="choose-video-button" class="btn btn-primary btn-lg ">Escolher Vídeo</button>
     </div>
     <!-- Vídeo selecionado -->
     <div class="video-choose">
@@ -21,30 +21,56 @@
     <form method="post" enctype="multipart/form-data" id="cut-video-form">
         {% csrf_token %}
         <!-- foi add um "m" no id abaixo, para teste -->
-        <div id="mcut-form-container">
+        <div id="cut-form-container">
 
             <div class="cut-form" id="cut-form">
-                
+
                 <div class="cut-form-item">
-                    <div>
-                        <label for="start_time">Início (HH:MM:SS):</label>
+
+                    <div class="cut-form-item-start">
+                        <label for="start_time">Início (hh:mm:ss)</label>
                         <input type="text" name="start_time" class="start-time" required>
                     </div>
-                    <div>
-                        <label for="end_time">Fim (HH:MM:SS):</label>
-                        <input type="text" name="end_time" class="end-time" required>
-                        <!-- Botão para excluir a div cut-form -->
-                        <button class="remove-cut-form">Remover Corte</button>
+
+                    <div class="cut-form-item-end">
+                        <div>
+                            <label for="end_time">Fim (hh:mm:ss):</label>
+                            <input type="text" name="end_time" class="end-time" required>
+
+                        </div>
                     </div>
+
+                    <div class="cut-form-item-button ">
+                        <!-- Botão para excluir a div cut-form -->
+                        <button class="remove-cut-form-button btn btn-danger btn-sm ">Remover Corte</button>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- Botão para adicionar um novo corte -->
-            <button id="add-cut-form">Adicionar Corte</button>
+            <div class="btn-add-cut">
+                <!-- Botão para adicionar um novo corte -->
+                <button id="add-cut-form" class="btn-primary btn">Adicionar Corte</button>
+            </div>
 
-            <!-- Botão para cortar o vídeo -->
-            <button id="cut-video-button" type="submit">Cortar Vídeo</button>
+
         </div>
+
+        <div class="btn-cut-video container" id="cut-video-button">
+            <!-- Botão para cortar o vídeo -->
+            <button class="btn-primary btn " type="submit">Cortar Vídeo</button>
+        </div>
+
+        
+
+        <!-- Modal -->
+        <div id="loading-modal" class="modal">
+            <div class="modal-content">
+                <p>Processando... <i class="fa fa-spinner fa-spin"></i></p>
+            </div>
+        </div>
+
+
     </form>
 
 

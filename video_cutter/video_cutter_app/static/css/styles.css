@@ -1,57 +1,153 @@
-
 /* Home */
-.choose-file, .video-choose{
-    display: flex;
-    background-color: blueviolet;
-    margin-top: 10px;
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente */
- 
+ a{
+    text-decoration: none;
 }
-/* foi add um "m" no id abaixo, para teste */
-#mcut-form-container{
-    /* display: flex; */
-    
-    background-color: blue;
+#cut-video-button {
+    display: none;
+}
+
+.choose-file,
+.video-choose {
+    /* background-color: blueviolet; */
+
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    justify-content: center;
+    /* Centraliza horizontalmente */
+    align-items: center;
+    /* Centraliza verticalmente */
+
+}
+
+.center-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh; /* Isso irá centralizar verticalmente também */
+}
+
+
+
+#cut-form-container {
+
+    /* background-color: blue; */
+
     margin: 20px;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
     max-width: 600px;
     margin: 0 auto;
+
 }
-.cut-form-item{
-    background-color: black;
+
+.cut-form-item {
+    /* background-color: black; */
+
     display: flex;
     justify-content: space-around;
+    margin-bottom: 10px;
+
 }
+
 /* Estilos para os rótulos (labels) */
 #cut-form label {
-    background-color: aqua;
+
+    /* background-color: aqua; */
+
     display: flex;
-    margin-bottom: 5px;
-    font-weight: bold;
+    /* margin-bottom: 5px; */
+
 }
+
 #cut-form input {
-    background-color: blueviolet;
-    /* width: 50%; */
+    /* background-color: blueviolet; */
+
+    /* width: 100%; */
     padding: 2px;
-    margin-bottom: 15px;
+    margin-bottom: 2px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
+
+
+.cut-form-item-button {
+    /* background-color: brown; */
+
+    display: flex;
+    align-items: end;
+}
+
+.btn-cut-video {
+    /* background-color: brown; */
+    margin-top: 10px;
+    width: 100%;
+}
+
+.btn-cut-video button {
+    display: block;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* loading */
+
+
+/* Estilos para o ícone de carregamento (usando FontAwesome) */
+/* Estilos para o modal de carregamento */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.modal-content {
+    background-color: #fff;
+    border-radius: 5px;
+    text-align: center;
+    position: absolute;
+    width: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+}
+
+.fa-spinner {
+    animation: fa-spin 2s infinite linear;
+}
+
+
 
 /* Geral */
 video {
     width: 50%;
     /* 100% para telas pequenas */
-    height: 50%;
+    /* height: 30%; */
 }
 
 @media (min-width: 768px) {
     video {
-        width: 50%;
+        width: 30%;
+        height: 30%;
         /* 70% para telas de computador */
+    }
+
+    .btn-cut-video {
+        align-items: center;
+    }
+
+    .btn-cut-video button {
+
+        /* background-color: brown; */
+
+        max-width: 50%;
     }
 }
 

@@ -5,6 +5,9 @@ const cutFormContainer = document.getElementById('cut-form-container');
 const cutForm = document.getElementById('cut-form');
 const cutVideoButton = document.getElementById('cut-video-button');
 const addCutFormButton = document.getElementById('add-cut-form');
+const removeCutFormButtons = document.querySelectorAll('.remove-cut-form-button');
+
+
 
 chooseVideoButton.addEventListener('click', function () {
     videoUploadInput.click();
@@ -20,35 +23,25 @@ videoUploadInput.addEventListener('change', function () {
     cutFormContainer.style.display = 'block';
     cutVideoButton.style.display = 'block';
     addCutFormButton.style.display = 'block';
+
+     // Adicionar classe de centralização
+     const chooseFileDiv = document.querySelector('.choose-file');
+     const videoChooseDiv = document.querySelector('.video-choose');
+     chooseFileDiv.classList.remove('center-button');
+     videoChooseDiv.classList.remove('center-button');
 });
 
-cutVideoButton.addEventListener('click', function () {
-    // Lógica para cortar o vídeo com os valores de startInputs e endInputs
-    const startInputs = document.querySelectorAll('.start-time');
-    const endInputs = document.querySelectorAll('.end-time');
-    // Execute a lógica de corte aqui
-});
 
-cutForm.addEventListener('click', function (event) {
-    if (event.target.classList.contains('remove-cut-form')) {
-        // Obter todos os elementos de corte
-        const cutFormItems = document.querySelectorAll('.cut-form-item');
 
-        // Verificar se há mais de um elemento de corte
-        if (cutFormItems.length > 1) {
-            // Remover o cut-form-item correspondente ao botão "Remover Corte" clicado
-            const cutFormItem = event.target.parentElement;
-            cutForm.removeChild(cutFormItem);
-        }
-        else {
-            // Mostrar um alert
-            alert('Você não pode excluir o único corte.');
-        }
-    }
-});
+
+
+
+applyRemoveCutFormButtonListener();
+
 
 addCutFormButton.addEventListener('click', function () {
     // Clonar o primeiro cut-form-item e adicionar após o último
+    
     const cutFormItems = document.querySelectorAll('.cut-form-item');
     const newCutFormItem = cutFormItems[0].cloneNode(true);
 
@@ -68,7 +61,53 @@ addCutFormButton.addEventListener('click', function () {
     endInput.addEventListener('input', function () {
         formatTimeInput(endInput);
     });
+
+
+   
+
+    // Reaplicar ouvinte de evento para todos os botões "Remover Corte"
+    applyRemoveCutFormButtonListener();
 });
+
+
+
+
+// Função para aplicar ouvinte de evento para botões "Remover Corte"
+
+function applyRemoveCutFormButtonListener() {
+    const removeCutFormButtons = document.querySelectorAll('.remove-cut-form-button');
+    const cutFormItems = document.querySelectorAll('.cut-form-item');
+    const cutFormContainer = document.getElementById('cut-form-container');
+
+    console.log("cutFormItems antes " + cutFormItems.length)
+            
+    //console.log("cutVideoButton antes "+cutVideoButton.length)
+    removeCutFormButtons.forEach(button => {
+        
+        button.addEventListener('click', function () {
+            const cutFormItems = document.querySelectorAll('.cut-form-item');
+
+            console.log("cutFormItems depois " + cutFormItems.length)
+            
+            // console.log("cutVideoButton depois "+cutVideoButton.length)
+
+            // Verifique se há mais de um .cut-form-item
+            if (cutFormItems.length > 1) {
+                // Encontre o elemento pai .cut-form-item do botão clicado
+                const cutFormItem = button.closest('.cut-form-item');
+                if (cutFormItem) {
+                    // Remova o .cut-form-item correspondente
+                    cutFormItem.remove();
+                    return;
+                }
+            } else {
+                alert("Você não pode excluir o único corte.");
+                return;
+            }
+        });
+    });
+}
+
 
 // Função para formatar os campos de entrada como HH:mm:ss
 function formatTimeInput(input) {
@@ -109,11 +148,17 @@ endInputs.forEach(input => {
     });
 });
 
+// Abra o modal quando o botão "Cortar Vídeo" for clicado
 
+const loadingModal = document.getElementById('loading-modal');
 //envia os dados para o python
 cutVideoButton.addEventListener('click', function (event) {
-    event.preventDefault();
 
+    event.preventDefault();
+    
+
+
+    
     const videoFile = videoUploadInput.files[0];
 
     // Obter todas as entradas de início (start) e fim (end)
@@ -125,7 +170,7 @@ cutVideoButton.addEventListener('click', function (event) {
         Array.from(endInputs).every(input => input.value.trim() !== '')) {
 
         const cuts = [];
-
+        loadingModal.style.display = 'block';
         // Iterar pelas entradas para obter os valores
         startInputs.forEach((startInput, index) => {
             const inicio = startInput.value;
@@ -164,6 +209,7 @@ cutVideoButton.addEventListener('click', function (event) {
         })
             .then(response => response.json())
             .then(data => {
+                loadingModal.style.display = 'none';
                 if (data.message === 'Operação concluída com sucesso') {
                     // Redirecionar para a página "results"
                     window.location.href = '/results';
@@ -174,8 +220,11 @@ cutVideoButton.addEventListener('click', function (event) {
             .catch(error => {
                 console.error('Erro na solicitação:', error);
                 alert('Erro na solicitação:', error);
+                loadingModal.style.display = 'none';
             });
     } else {
         alert("Preencha todos os campos de início e fim antes de cortar o vídeo.");
     }
 });
+
+
