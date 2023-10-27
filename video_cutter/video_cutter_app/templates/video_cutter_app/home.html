@@ -13,23 +13,29 @@
     </div>
     <!-- Vídeo selecionado -->
     <div class="video-choose">
-    <video controls id="video-player" style="display: none;">
-        Seu navegador não suporta a reprodução de vídeo.
-    </video>
-</div>
+        <video controls id="video-player" style="display: none;">
+            Seu navegador não suporta a reprodução de vídeo.
+        </video>
+    </div>
     <!-- Div para campos de início e fim do corte -->
     <form method="post" enctype="multipart/form-data" id="cut-video-form">
         {% csrf_token %}
+        <!-- foi add um "m" no id abaixo, para teste -->
+        <div id="mcut-form-container">
 
-        <div id="cut-form-container">
             <div class="cut-form" id="cut-form">
+                
                 <div class="cut-form-item">
-                    <label for="start_time">Início (HH:MM:SS):</label>
-                    <input type="text" name="start_time" class="start-time" required>
-                    <label for="end_time">Fim (HH:MM:SS):</label>
-                    <input type="text" name="end_time" class="end-time" required>
-                    <!-- Botão para excluir a div cut-form -->
-                    <button class="remove-cut-form">Remover Corte</button>
+                    <div>
+                        <label for="start_time">Início (HH:MM:SS):</label>
+                        <input type="text" name="start_time" class="start-time" required>
+                    </div>
+                    <div>
+                        <label for="end_time">Fim (HH:MM:SS):</label>
+                        <input type="text" name="end_time" class="end-time" required>
+                        <!-- Botão para excluir a div cut-form -->
+                        <button class="remove-cut-form">Remover Corte</button>
+                    </div>
                 </div>
             </div>
 

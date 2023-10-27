@@ -8,10 +8,38 @@
     align-items: center; /* Centraliza verticalmente */
  
 }
-
-
-
-
+/* foi add um "m" no id abaixo, para teste */
+#mcut-form-container{
+    /* display: flex; */
+    
+    background-color: blue;
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+.cut-form-item{
+    background-color: black;
+    display: flex;
+    justify-content: space-around;
+}
+/* Estilos para os rótulos (labels) */
+#cut-form label {
+    background-color: aqua;
+    display: flex;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+#cut-form input {
+    background-color: blueviolet;
+    /* width: 50%; */
+    padding: 2px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 
 /* Geral */
 video {
