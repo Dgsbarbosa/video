@@ -1,35 +1,119 @@
-    {% extends "video_cutter_app/base.html" %}
+{% extends "video_cutter_app/base.html" %}
 
-    {% block content %}
+
+{% block content %}
+
+<div class="body-results">
 
 
     <!-- Vídeo original -->
     <h2>Vídeo Original</h2>
-    <video controls>
-        <source src="{{ video.video_file.url }}" type="{{ video.video_file.content_type }}">
-        Seu navegador não suporta a reprodução de vídeo.
-    </video>
+    <div class="row video-original ">
+
+
+
+        <div class=" ">
+            <!-- Certifique-se de que está usando a classe .col-md-4 corretamente -->
+
+            <div class="card">
+                <!-- Adicione a classe .h-100 para tornar a altura do card 100% -->
+
+                <div class="card-media">
+
+
+                    <video controls>
+                        <source src="{{ video.video_file.url }}" type="{{ video.video_file.content_type }}">
+                        Seu navegador não suporta a reprodução de vídeo.
+                    </video>
+
+                </div>
+
+
+            </div>
+        </div>
+
+    </div>
+
 
     <!-- Cortes do vídeo -->
-    <h2>Cortes do Vídeo</h2>
-    
-    {% for cut in cuts %}
-
-    <h3>Corte {{ forloop.counter }}</h3>
-    <h4>Inicio do corte: {{ cut.start_time }} - Fim do corte: {{ cut.end_time  }}</h4>
-
-    {% if  cut.video_path == "Intervalo inválido" %}
-
-    <h1>Intervalo de corte invalido</h1>
-    {% else %}
 
 
-    <video controls>
-        <source src="{{ cut.video_path.url }}" type="{{ cut.video_path.content_type }}">
-        Seu navegador não suporta a reprodução de vídeo.
-    </video>
+    <div class="row results-cards">
 
-    {% endif %}
-    {% endfor %}
+        <div class="results-title">
+            <h2>Cortes do Vídeo</h2>
+        </div>
 
-    {% endblock %}
+        {% for cut in cuts %}
+
+        <div class="col-md-3 {% if 'Mobile' in request.META.HTTP_USER_AGENT %}col-sm-6{% endif %} cards-items ">
+            <!-- Certifique-se de que está usando a classe .col-md-4 corretamente -->
+
+            <div class="card ">
+                <!-- Adicione a classe .h-100 para tornar a altura do card 100% -->
+
+                <div class="card-media">
+
+                    {% if cut.video_path == "Intervalo inválido" %}
+
+                    <i class="fas fa-exclamation-triangle fa-5x text-danger card-img-top"></i>
+
+                    {% else %}
+
+                    <video class="card-img-top" controls width="286" height="180">
+                        <source src="{{ cut.video_path.url }}" type="{{ cut.video_path.content_type }}">
+                        Seu navegador não suporta a reprodução de vídeo.
+                    </video>
+
+                    {% endif %}
+                </div>
+
+                <div class="card-body card-result">
+
+                    <h5 class="card-title">Corte {{ forloop.counter }}</h5>
+
+                   
+
+                    <table class="table" >
+                        <tbody style="width: 100%;">
+                            <tr>
+                                <th>Início do corte:</th>
+                                <td>{{ cut.start_time }}</td>
+                            </tr>
+                            <tr>
+                                <th>Fim do corte:</th>
+                                <td>{{ cut.end_time }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+
+                    {% if cut.video_path == "Intervalo inválido" %}
+
+                    <p class="card-text intervalo-invalido">Intervalo de corte inválido</p>
+                    {% else %}
+
+                    <p class="card-text cut-success">Corte realizado com sucesso</p>
+
+                    <div class="div-btn-dowload-cut">
+
+                        <a href="{{ cut.video_path.url }}" download="corte_{{ forloop.counter }}.mp4"
+                            class="btn btn-primary ">Download</a>
+
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if forloop.counter|divisibleby:4 and not forloop.last %}
+        <div class="row"></div>
+        {% endif %}
+
+        {% endfor %}
+    </div>
+</div>
+
+
+
+{% endblock %}

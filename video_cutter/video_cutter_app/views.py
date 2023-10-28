@@ -29,10 +29,11 @@ def home(request):
 
 def process_video(request):
     # Limpar o banco de dados no início da função
-    Video.objects.all().delete()
-    VideoCut.objects.all().delete()
     
     if request.method == 'POST':
+        Video.objects.all().delete()
+        VideoCut.objects.all().delete()
+    
         video_file = request.FILES.get('video')
         cuts_json = request.POST.get('cuts')
         

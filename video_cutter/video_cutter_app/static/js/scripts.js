@@ -155,7 +155,7 @@ const loadingModal = document.getElementById('loading-modal');
 cutVideoButton.addEventListener('click', function (event) {
 
     event.preventDefault();
-    
+     
 
 
     
