@@ -1,7 +1,7 @@
 # views.py
 #coding:latin-1
 from django.conf import settings
-from django.urls import reversepython
+
 
 from django.shortcuts import render,redirect
 from .models import Video, VideoCut
