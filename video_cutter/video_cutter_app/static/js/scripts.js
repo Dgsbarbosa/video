@@ -1,5 +1,6 @@
 const videoUploadInput = document.getElementById('video-upload-input');
 const chooseVideoButton = document.getElementById('choose-video-button');
+const downloadUrlVideo = document.getElementById('download-video-button')
 const videoPlayer = document.getElementById('video-player');
 const cutFormContainer = document.getElementById('cut-form-container');
 const cutForm = document.getElementById('cut-form');
@@ -13,6 +14,37 @@ chooseVideoButton.addEventListener('click', function () {
     videoUploadInput.click();
 });
 
+downloadUrlVideo.addEventListener('click', function () {
+    const videoUrl = document.getElementById('video-url-input').value;
+    
+    // Verificar se a URL não está vazia
+    if (!videoUrl) {
+        alert('Por favor, insira uma URL.');
+        return;
+    }
+
+    fetch(videoUrl)
+        .then(response => response.blob())
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            videoPlayer.src = url;
+            videoPlayer.style.display = 'block';
+
+            // Exibir o contêiner de corte quando houver vídeo
+            cutFormContainer.style.display = 'block';
+            cutVideoButton.style.display = 'block';
+            addCutFormButton.style.display = 'block';
+
+            // Adicionar classe de centralização
+            const chooseFileDiv = document.getElementById("choose-file")
+    chooseFileDiv.style.display = "none"
+        })
+        .catch(() => alert('Erro ao carregar o vídeo. Por favor, verifique a URL.'));
+});
+
+
+
+
 videoUploadInput.addEventListener('change', function () {
     const file = this.files[0];
     const videoURL = URL.createObjectURL(file);
@@ -24,11 +56,10 @@ videoUploadInput.addEventListener('change', function () {
     cutVideoButton.style.display = 'block';
     addCutFormButton.style.display = 'block';
 
-     // Adicionar classe de centralização
-     const chooseFileDiv = document.querySelector('.choose-file');
-     const videoChooseDiv = document.querySelector('.video-choose');
-     chooseFileDiv.classList.remove('center-button');
-     videoChooseDiv.classList.remove('center-button');
+    // Adicionar classe de centralização
+
+    const chooseFileDiv = document.getElementById("choose-file")
+    chooseFileDiv.style.display = "none"
 });
 
 
@@ -39,9 +70,10 @@ videoUploadInput.addEventListener('change', function () {
 applyRemoveCutFormButtonListener();
 
 
+//Adicionar corte
 addCutFormButton.addEventListener('click', function () {
     // Clonar o primeiro cut-form-item e adicionar após o último
-    
+
     const cutFormItems = document.querySelectorAll('.cut-form-item');
     const newCutFormItem = cutFormItems[0].cloneNode(true);
 
@@ -63,7 +95,7 @@ addCutFormButton.addEventListener('click', function () {
     });
 
 
-   
+
 
     // Reaplicar ouvinte de evento para todos os botões "Remover Corte"
     applyRemoveCutFormButtonListener();
@@ -80,15 +112,15 @@ function applyRemoveCutFormButtonListener() {
     const cutFormContainer = document.getElementById('cut-form-container');
 
     console.log("cutFormItems antes " + cutFormItems.length)
-            
+
     //console.log("cutVideoButton antes "+cutVideoButton.length)
     removeCutFormButtons.forEach(button => {
-        
+
         button.addEventListener('click', function () {
             const cutFormItems = document.querySelectorAll('.cut-form-item');
 
             console.log("cutFormItems depois " + cutFormItems.length)
-            
+
             // console.log("cutVideoButton depois "+cutVideoButton.length)
 
             // Verifique se há mais de um .cut-form-item
@@ -151,14 +183,18 @@ endInputs.forEach(input => {
 // Abra o modal quando o botão "Cortar Vídeo" for clicado
 
 const loadingModal = document.getElementById('loading-modal');
+
+
+
+
 //envia os dados para o python
 cutVideoButton.addEventListener('click', function (event) {
 
     event.preventDefault();
-     
 
 
-    
+
+
     const videoFile = videoUploadInput.files[0];
 
     // Obter todas as entradas de início (start) e fim (end)
@@ -184,11 +220,6 @@ cutVideoButton.addEventListener('click', function (event) {
 
         // Criar um objeto com os cortes e o arquivo de vídeo
         const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-        const videoData = {
-            csrfmiddlewaretoken: csrfToken,
-            video: videoFile,
-            cuts: cuts,
-        };
 
         // Criar uma nova instância do objeto FormData
         const formData = new FormData();

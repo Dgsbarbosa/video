@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
 import json
-import tempfile
+
 import os
 
 import tempfile
@@ -27,12 +27,16 @@ def home(request):
 
 
 
-def process_video(request):
-    # Limpar o banco de dados no início da função
+def process_video(request):    
+    
     
     if request.method == 'POST':
+        
+        # Limpar o banco de dados no início da função
         Video.objects.all().delete()
         VideoCut.objects.all().delete()
+        # Crie a pasta temporária
+        limpar_pasta_videos()
     
         video_file = request.FILES.get('video')
         cuts_json = request.POST.get('cuts')
@@ -46,13 +50,17 @@ def process_video(request):
             cut_objects = []
             video = None  # Inicialize o objeto Video
 
-            limpar_pasta_videos()
+            
+            # Crie a pasta temporária
+            
+            
             try:
                 video = Video.objects.create(video_file=video_file)  # Crie e salve o objeto Video
+                
             except Exception as e:
-                return redirect('home')  # Redirecionar de volta para a página inicial em caso de erro
-
+                return JsonResponse({'error': e})  
             for idx, cut in enumerate(cuts, start=1):
+                
                 start_time = convert_to_seconds(cut['start'])
                 end_time = convert_to_seconds(cut['end'])
     
@@ -68,6 +76,9 @@ def process_video(request):
                     temp_filepath = os.path.join(settings.MEDIA_ROOT, 'videos', temp_filename)
 
                     ffmpeg_extract_subclip(video_file.temporary_file_path(), start_time, end_time, targetname=temp_filepath)
+                    
+                    print(f"Temp filepath: {temp_filepath}")
+                    print(f"Video file path: {video_file.temporary_file_path()}")
                     
                     try:
                         cut_obj = VideoCut(
@@ -101,18 +112,19 @@ def results(request):
     return render(request, 'video_cutter_app/results.html', context)
 
 def limpar_pasta_videos():
-    pasta_videos = os.path.join(settings.MEDIA_ROOT, 'videos')
     
+    pasta_videos = os.path.join(settings.MEDIA_ROOT, 'videos')
     # Verifique se a pasta de vídeos existe
-    if os.path.exists(pasta_videos):
+    if os.path.exists(pasta_videos) :
         # Liste todos os arquivos na pasta
         
         arquivos = os.listdir(pasta_videos)
         
-        # Exclua cada arquivo na pasta
         for arquivo in arquivos:
             caminho_arquivo = os.path.join(pasta_videos, arquivo)
             os.remove(caminho_arquivo)
+        
+        
     else:
         # Se a pasta não existir, crie-a
         os.makedirs(pasta_videos, exist_ok=True)

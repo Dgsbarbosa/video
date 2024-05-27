@@ -10,11 +10,13 @@ a {
     display: none;
 }
 
+
 .choose-file,
 .video-choose {
     /* background-color: blueviolet; */
-
+    /*  */
     display: flex;
+    flex-direction: column;
     margin-top: 10px;
     margin-bottom: 10px;
     justify-content: center;
@@ -24,12 +26,37 @@ a {
 
 }
 
+.ou{
+    margin: 20px;
+}
+
+.download-video-input{
+    /* border: 5px solid black; */
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 70vh;
+    flex-direction: column;
+}
+
+.download-video-input input{
+    margin: 20px;
+    width: 100%;
+    text-align: center;
+}
+
+.download-video-input button{
+    width: 50%;
+}
+
 video{
     /* background-color: blueviolet; */
     border-radius: 10px;
     width: 50%;
 }
 .center-button {
+
+    border: 2px solid black;
     display: flex;
     justify-content: center;
     align-items: center;
