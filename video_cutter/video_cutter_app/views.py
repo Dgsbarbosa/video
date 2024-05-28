@@ -16,8 +16,11 @@ import os
 from django.http import HttpResponse
 import tempfile
 import shutil
+from django.core.files.storage import default_storage
 
 def home(request):
+    
+    limpar_pasta_videos()
     if request.method == 'POST' and 'video' in request.FILES:
         video = Video.objects.create(video_file=request.FILES['video'])
     else:
@@ -43,8 +46,12 @@ def process_video(request):
         cuts_json = request.POST.get('cuts')
         
         if cuts_json is not None:
+            
+            temp_file = default_storage.save(os.path.join('videos', video_file.name), video_file)
+            temp_file_path_origin = os.path.join(settings.MEDIA_ROOT, temp_file)
+            
             cuts = json.loads(cuts_json)
-            video_clip = VideoFileClip(video_file.temporary_file_path())
+            video_clip = VideoFileClip(temp_file_path_origin)
             video_duration = video_clip.duration
             video_clip.close()
 
@@ -52,11 +59,10 @@ def process_video(request):
             video = None  # Inicialize o objeto Video
 
             
-            # Crie a pasta tempor�ria
-            
+            # Crie a pasta tempor�ria            
             
             try:
-                video = Video.objects.create(video_file=video_file)  # Crie e salve o objeto Video
+                video = Video.objects.create(video_file=temp_file_path_origin)  # Crie e salve o objeto Video
                 
             except Exception as e:
                 return JsonResponse({'error': e})  
@@ -71,17 +77,18 @@ def process_video(request):
                 end_time = min(video_duration, end_time)
 
                 if start_time >= video_duration or end_time >= video_duration:
-                    invalid_cut = VideoCut(video_path='Intervalo inv�lido', start_time=cut['start'], end_time=cut['end'],video=video)
+                    invalid_cut = VideoCut(video_path='Intervalo invalido', start_time=cut['start'], end_time=cut['end'],video=video)
                     invalid_cut.save()
                     cut_objects.append(invalid_cut)
                 else:
                     temp_filename = f'temp_cut_{idx}.mp4'
                     temp_filepath = os.path.join(settings.MEDIA_ROOT, 'videos', temp_filename)
 
-                    ffmpeg_extract_subclip(video_file.temporary_file_path(), start_time, end_time, targetname=temp_filepath)
+                    ffmpeg_extract_subclip(temp_file_path_origin, start_time, end_time, targetname=temp_filepath)
                     
                     print(f"Temp filepath: {temp_filepath}")
-                    print(f"Video file path: {video_file.temporary_file_path()}")
+                    
+                    print(f"Video file path: {video_file}")
                     
                     try:
                         cut_obj = VideoCut(
@@ -114,6 +121,8 @@ def results(request):
     }
     return render(request, 'video_cutter_app/results.html', context)
 
+
+# faz um dowload em zip de todos os corte
 def download_all_cuts(request):
     pasta_videos = os.path.join(settings.MEDIA_ROOT, 'videos')
     arquivos = os.listdir(pasta_videos)
