@@ -1,5 +1,6 @@
 # views.py
 #coding:latin-1
+from io import BytesIO
 from django.conf import settings
 
 
@@ -10,9 +11,10 @@ from django.http import JsonResponse
 from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
 import json
+import zipfile
 
 import os
-
+from django.http import HttpResponse
 import tempfile
 import shutil
 
@@ -32,10 +34,10 @@ def process_video(request):
     
     if request.method == 'POST':
         
-        # Limpar o banco de dados no início da função
+        # Limpar o banco de dados no inï¿½cio da funï¿½ï¿½o
         Video.objects.all().delete()
         VideoCut.objects.all().delete()
-        # Crie a pasta temporária
+        # Crie a pasta temporï¿½ria
         limpar_pasta_videos()
     
         video_file = request.FILES.get('video')
@@ -51,7 +53,7 @@ def process_video(request):
             video = None  # Inicialize o objeto Video
 
             
-            # Crie a pasta temporária
+            # Crie a pasta temporï¿½ria
             
             
             try:
@@ -60,15 +62,17 @@ def process_video(request):
             except Exception as e:
                 return JsonResponse({'error': e})  
             for idx, cut in enumerate(cuts, start=1):
+            
                 
                 start_time = convert_to_seconds(cut['start'])
                 end_time = convert_to_seconds(cut['end'])
-    
+
+                
                 start_time = max(0, start_time)
                 end_time = min(video_duration, end_time)
 
                 if start_time >= video_duration or end_time >= video_duration:
-                    invalid_cut = VideoCut(video_path='Intervalo inválido', start_time=cut['start'], end_time=cut['end'],video=video)
+                    invalid_cut = VideoCut(video_path='Intervalo invï¿½lido', start_time=cut['start'], end_time=cut['end'],video=video)
                     invalid_cut.save()
                     cut_objects.append(invalid_cut)
                 else:
@@ -92,11 +96,11 @@ def process_video(request):
                     except Exception as e:
                         return redirect('home')
 
-            # Redirecionar para a página "results" após o processamento
-            return JsonResponse({'message': 'Operação concluída com sucesso'})
+            # Redirecionar para a pï¿½gina "results" apï¿½s o processamento
+            return JsonResponse({'message': 'Ok'})
 
 def results(request):
-    # Adicione a lógica para recuperar os cortes processados aqui
+    # Adicione a lï¿½gica para recuperar os cortes processados aqui
     
     # C:\Users\guinh\Desktop\video\video_cutter\media\videos\corte2.mp4
     
@@ -111,10 +115,32 @@ def results(request):
     }
     return render(request, 'video_cutter_app/results.html', context)
 
+def download_all_cuts(request):
+    pasta_videos = os.path.join(settings.MEDIA_ROOT, 'videos')
+    arquivos = os.listdir(pasta_videos)
+
+    # Crie um objeto de buffer para armazenar o arquivo zip
+    buffer = BytesIO()
+
+    # Crie um arquivo zip
+    with zipfile.ZipFile(buffer, 'w') as zip_file:
+        # Adicione cada arquivo de vÃ­deo Ã  pasta zip
+        for arquivo in arquivos:
+            if arquivo.startswith('temp'):
+                caminho_arquivo = os.path.join(pasta_videos, arquivo)
+                zip_file.write(caminho_arquivo, os.path.basename(caminho_arquivo))
+
+    # Configure a resposta HTTP com o conteÃºdo do arquivo zip
+    response = HttpResponse(buffer.getvalue(), content_type='application/zip')
+    response['Content-Disposition'] = 'attachment; filename="cortes.zip"'
+
+    return response
+
+
 def limpar_pasta_videos():
     
     pasta_videos = os.path.join(settings.MEDIA_ROOT, 'videos')
-    # Verifique se a pasta de vídeos existe
+    # Verifique se a pasta de vï¿½deos existe
     if os.path.exists(pasta_videos) :
         # Liste todos os arquivos na pasta
         
@@ -126,7 +152,7 @@ def limpar_pasta_videos():
         
         
     else:
-        # Se a pasta não existir, crie-a
+        # Se a pasta nï¿½o existir, crie-a
         os.makedirs(pasta_videos, exist_ok=True)
         
         
@@ -142,7 +168,7 @@ def convert_to_seconds(string):
         minutos, segundos = map(int,partes)
         total_seconds = minutos * 60 + segundos
     else:
-        # print("Formato de tempo inválido. Use HH:MM:SS.")
+        # print("Formato de tempo invï¿½lido. Use HH:MM:SS.")
         return None
     
     # print(f"{horas} horas, {minutos} minutos, {segundos} segundos")

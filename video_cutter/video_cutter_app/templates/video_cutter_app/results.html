@@ -44,6 +44,13 @@
             <h2>Cortes do Vídeo</h2>
         </div>
 
+         <!-- Botão para download de todos os vídeos cortados -->
+         <div class="col-md-12" style="margin-bottom: 20px;">
+            <div class="text-center">
+                <a href="{% url 'download_all_cuts' %}" class="btn btn-primary">Download de Todos os Cortes</a>
+            </div>
+        </div>
+
         {% for cut in cuts %}
 
         <div class="col-md-3 {% if 'Mobile' in request.META.HTTP_USER_AGENT %}col-sm-6{% endif %} cards-items ">

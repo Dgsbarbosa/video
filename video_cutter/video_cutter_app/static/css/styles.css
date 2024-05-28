@@ -51,12 +51,14 @@ a {
 
 video{
     /* background-color: blueviolet; */
+    /* border: 20px solid black; */
     border-radius: 10px;
-    width: 50%;
+    height: 300px;
+    
 }
 .center-button {
 
-    border: 2px solid black;
+    /* border: 2px solid black; */
     display: flex;
     justify-content: center;
     align-items: center;
