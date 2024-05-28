@@ -12,7 +12,6 @@ from moviepy.video.io.ffmpeg_tools import ffmpeg_extract_subclip
 from moviepy.editor import VideoFileClip
 import json
 import zipfile
-
 import os
 from django.http import HttpResponse
 import tempfile
