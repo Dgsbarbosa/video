@@ -5,18 +5,18 @@
 
 <div class="body-results">
 
-
-    <!-- Vídeo original -->
+<!-- 
+     Vídeo original 
     <h2>Vídeo Original</h2>
     <div class="row video-original ">
 
 
 
         <div class=" ">
-            <!-- Certifique-se de que está usando a classe .col-md-4 corretamente -->
+            
 
             <div class="card">
-                <!-- Adicione a classe .h-100 para tornar a altura do card 100% -->
+               
 
                 <div class="card-media">
 
@@ -32,7 +32,7 @@
             </div>
         </div>
 
-    </div>
+    </div> -->
 
 
     <!-- Cortes do vídeo -->
@@ -67,7 +67,7 @@
 
                     {% else %}
 
-                    <video class="card-img-top" controls width="286" height="180">
+                    <video class="card-img-top" controls width="286" height="180" loading="lazy">
                         <source src="{{ cut.video_path.url }}" type="{{ cut.video_path.content_type }}">
                         Seu navegador não suporta a reprodução de vídeo.
                     </video>

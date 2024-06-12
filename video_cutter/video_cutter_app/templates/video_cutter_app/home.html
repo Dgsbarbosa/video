@@ -2,6 +2,22 @@
 
 
 {% block content %}
+
+<!-- Campo para inserir o link do YouTube -->
+<div class="youtube-link "id="youtube-link" >
+    <form method="post" enctype="multipart/form-data" id="youtube-download-form">
+        {% csrf_token %}
+        <div class="youtube-link-div-internal">
+            <label for="youtube-url">Link do YouTube:</label>
+            
+            <input type="url" name="youtube_url" id="youtube-url" required>
+            <button id="download-youtube-video-button" class="btn btn-primary btn-sm" type="submit">Baixar Vídeo</button>
+        </div>
+    </form>
+
+    <span class="ou">OU</span>
+</div>
+
 <!-- Botão para escolher e carregar vídeo -->
 <div class="choose-file  center-button" id="choose-file">
 
@@ -16,17 +32,28 @@
 
 
 <!-- Vídeo selecionado -->
+{% if video %}
+<div class="video-choose">
+    <video controls id="video-player" style="display: block;">
+        <source src="{{ video.video_file.url }}" type="video/mp4">
+        Seu navegador não suporta a reprodução de vídeo.
+    </video>
+</div>
+<div id="video-url" data-url="{{ video.video_file.url }}"></div>
+{% else %}
 <div class="video-choose">
     <video controls id="video-player" style="display: none;">
         Seu navegador não suporta a reprodução de vídeo.
     </video>
 </div>
+{% endif %}
 
 
 <!-- Div para campos de início e fim do corte -->
 <form method="post" enctype="multipart/form-data" id="cut-video-form">
     {% csrf_token %}
-    <!-- foi add um "m" no id abaixo, para teste -->
+    
+    
     <div id="cut-form-container">
 
         <div class="cut-form" id="cut-form">

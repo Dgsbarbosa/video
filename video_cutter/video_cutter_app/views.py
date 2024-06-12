@@ -2,7 +2,7 @@
 #coding:latin-1
 from io import BytesIO
 from django.conf import settings
-
+from pytube import YouTube
 
 from django.shortcuts import render,redirect
 from .models import Video, VideoCut
@@ -14,17 +14,51 @@ import json
 import zipfile
 import os
 from django.http import HttpResponse
-import tempfile
-import shutil
+
 from django.core.files.storage import default_storage
 
-def home(request):
+def download_youtube_video(url, download_path):
+    new_filename = "video_original"
+    try:
+        yt = YouTube(url)
+        stream = yt.streams.get_highest_resolution()
+        downloaded_file_path = stream.download(output_path=download_path)
+        
+        if new_filename:
+            # Obtenha a extens�o do arquivo original
+            original_extension = os.path.splitext(downloaded_file_path)[1]
+            new_file_path = os.path.join(download_path, new_filename + original_extension)
+            
+            # Renomeie o arquivo
+            os.rename(downloaded_file_path, new_file_path)
+            return new_file_path
+        else:
+            return downloaded_file_path
+    except Exception as e:
+        return f"Erro ao baixar o video: {e}"
     
+    
+def home(request):
     limpar_pasta_videos()
-    if request.method == 'POST' and 'video' in request.FILES:
-        video = Video.objects.create(video_file=request.FILES['video'])
-    else:
-        video = Video.objects.first()
+    
+    video = None  # Inicializa a vari�vel video
+    
+    if request.method == 'POST':
+        if 'video' in request.FILES:
+            video = Video.objects.create(video_file=request.FILES['video'])
+            
+        elif 'youtube_url' in request.POST:
+            youtube_url = request.POST['youtube_url']
+            download_path = os.path.join(settings.MEDIA_ROOT, 'videos')
+            os.makedirs(download_path, exist_ok=True)
+            download_result = download_youtube_video(youtube_url, download_path)
+            
+          
+            if not download_result.startswith("Erro"):
+                video = Video.objects.create(video_file=os.path.join('videos', download_result))
+            else:
+                return JsonResponse({'error': download_result})
+    
 
     context = {'video': video}
     return render(request, 'video_cutter_app/home.html', context)
@@ -43,6 +77,8 @@ def process_video(request):
         limpar_pasta_videos()
     
         video_file = request.FILES.get('video')
+      
+        
         cuts_json = request.POST.get('cuts')
         
         if cuts_json is not None:
@@ -85,10 +121,7 @@ def process_video(request):
                     temp_filepath = os.path.join(settings.MEDIA_ROOT, 'videos', temp_filename)
 
                     ffmpeg_extract_subclip(temp_file_path_origin, start_time, end_time, targetname=temp_filepath)
-                    
-                    print(f"Temp filepath: {temp_filepath}")
-                    
-                    print(f"Video file path: {video_file}")
+         
                     
                     try:
                         cut_obj = VideoCut(
@@ -108,7 +141,6 @@ def process_video(request):
 def results(request):
     # Adicione a l�gica para recuperar os cortes processados aqui
     
-    # C:\Users\guinh\Desktop\video\video_cutter\media\videos\corte2.mp4
     
     video_original = Video.objects.last()
     cuts = VideoCut.objects.filter(video=video_original) 

@@ -1,6 +1,7 @@
 const videoUploadInput = document.getElementById('video-upload-input');
 const chooseVideoButton = document.getElementById('choose-video-button');
-const downloadUrlVideo = document.getElementById('download-video-button');
+const downloadUrlVideo = document.getElementById('download-youtube-video-button');
+
 const videoPlayer = document.getElementById('video-player');
 const cutFormContainer = document.getElementById('cut-form-container');
 const cutForm = document.getElementById('cut-form');
@@ -8,9 +9,34 @@ const cutVideoButton = document.getElementById('cut-video-button');
 const addCutFormButton = document.getElementById('add-cut-form');
 const removeCutFormButtons = document.querySelectorAll('.remove-cut-form-button');
 
+
+
+videoPlayer.addEventListener('loadedmetadata', function () {    
+    
+    videoPlayer.style.display = 'block';
+    cutFormContainer.style.display = 'block';
+    cutVideoButton.style.display = 'block';
+    addCutFormButton.style.display = 'block';
+    const chooseFileDiv = document.getElementById("choose-file");
+    chooseFileDiv.style.display = "none";
+    const youtubeLinkDiv = document.getElementById("youtube-link");
+    youtubeLinkDiv.style.display = "none"
+    // Faça algo aqui após o carregamento do vídeo
+});
+
+videoPlayer.addEventListener('error', function () {
+    console.error('Ocorreu um erro ao carregar o vídeo!');
+    // Trate o erro de carregamento do vídeo aqui
+});
+
+
 chooseVideoButton.addEventListener('click', function () {
     videoUploadInput.click();
+
+
 });
+
+
 
 videoUploadInput.addEventListener('change', function () {
     const file = this.files[0];
@@ -96,16 +122,23 @@ endInputs.forEach(input => {
 
 const loadingModal = document.getElementById('loading-modal');
 
-function getVideoDuration(video) {
+function getVideoDuration() {
     return new Promise((resolve, reject) => {
-        const videoElement = document.createElement('video');
-        videoElement.src = URL.createObjectURL(video);
-        videoElement.addEventListener('loadedmetadata', () => {
-            const duration = videoElement.duration;
+        // Verifique se os metadados do vídeo já foram carregados
+        if (videoPlayer.readyState >= 1) {
+            // Os metadados já foram carregados, então podemos obter a duração imediatamente
+            const duration = videoPlayer.duration;
+
             resolve(duration.toFixed(2));
-        });
+        } else {
+            // Os metadados ainda não foram carregados, então precisamos esperar pelo evento 'loadedmetadata'
+            videoPlayer.addEventListener('loadedmetadata', () => {
+                const duration = videoPlayer.duration;
+                resolve(duration.toFixed(2));
+            });
+        }
     });
-};
+}
 
 function formatTime(seconds) {
     let hrs = Math.floor(seconds / 3600);
@@ -127,7 +160,7 @@ function cutVideoOption(durationPerVideo, durationTotal) {
 
 async function automaticCuts(video) {
     let cuts = [];
-    let durationTotal = await getVideoDuration(video);
+    let durationTotal = await getVideoDuration();
     let validOption = false;
 
     while (!validOption) {
@@ -159,9 +192,12 @@ async function automaticCuts(video) {
     return cuts;
 }
 
+
 cutVideoButton.addEventListener('click', async function (event) {
     event.preventDefault();
     const videoFile = videoUploadInput.files[0];
+
+
     const startInputs = document.querySelectorAll('.start-time');
     const endInputs = document.querySelectorAll('.end-time');
     let cuts = [];

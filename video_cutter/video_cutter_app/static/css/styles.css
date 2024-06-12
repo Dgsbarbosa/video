@@ -26,8 +26,39 @@ a {
 
 }
 
+.youtube-link{
+    /* border: 2px solid black; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.youtube-link-div-internal{
+    /* border: 2px solid rgb(209, 0, 0); */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    
+}
+.youtube-link-div-internal input{
+    width: 30vw;
+    text-align: center;
+}
+.youtube-link-div-internal button{
+    margin-top: 5px;
+    width: 20vw;
+
+}
+
+
+
 .ou{
     margin: 20px;
+    text-align: center;
 }
 
 .download-video-input{
@@ -62,7 +93,7 @@ video{
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 70vh;
+    
     /* Isso irá centralizar verticalmente também */
 }
 
